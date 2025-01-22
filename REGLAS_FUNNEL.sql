@@ -1,0 +1,293 @@
+SELECT 
+DISTINCT
+    CAMPAIGN,
+    BANNER_ADGROUP,
+    CAMPAIGN_TYPE,
+
+    -- HOMOLOGA CHANNEL
+    CASE 
+        WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        ELSE CAMPAIGN_TYPE 
+    END AS channel,
+
+    -- HOMOLOGA PLACEMENT (Line Item)
+    CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END AS PLACEMENT_FUNNEL,
+
+    -- HOMOLOGA CAMPAIGN FUNNEL
+    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END AS CAMPAIGN_FUNNEL,
+
+    -- CALCULA FUNNEL
+
+    -- STAGE 1
+    CASE 
+        WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(BRAND_BOTB_Alkemy|BRAND_FR_Alkemy|BRAND_ER_Alkemy)\b') 
+             AND 
+             
+             (  CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END) = 'AWA' THEN 'TOFU'
+
+    -- STAGE 2 
+        WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(OPENING XCP)\b') 
+             AND 
+             
+             (  CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END) = 'PRS' 
+    AND REGEXP_CONTAINS(MEDIA, r'\b(Conde Nast|Fodors|Travel and Leisure|Teads|Taboola|TravelPulse)\b') 
+    THEN 'TOFU'
+
+-- STAGE 3
+
+ WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(OPENING XCP)\b') 
+             AND 
+             
+             (  CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END) = 'PRS' 
+    AND REGEXP_CONTAINS(MEDIA, r'\b(DV360|TripAdvisor|META)\b') 
+    THEN 'MOFU'
+
+-- STAGE 4
+WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(AO)\b') 
+          
+    AND REGEXP_CONTAINS(MEDIA, r'\b(PMAX)\b') 
+    THEN 'BOFU'
+
+-- STAGE 5 
+        WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(BLACK FRIDAY|AO|TEST)\b') 
+            AND  REGEXP_CONTAINS(
+                ( CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END )
+                
+                , r'\b(PRS|SEM GEN)\b')
+THEN 'MOFU'
+
+--STAGE 6
+
+      WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(OPENING XCP|BLACK FRIDAY|AO|TEST)\b') 
+            AND  REGEXP_CONTAINS(
+                ( CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END )
+                
+                , r'\b(RTG|SEM BRAND)\b')
+THEN 'BOFU'
+
+-- STAGE 7
+
+    WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(NEW YEAR)\b') 
+            AND  REGEXP_CONTAINS(
+                ( CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+       -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+       -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END )
+                
+                , r'\b(RTG|SEM BRAND)\b')
+THEN 'BOFU'
+
+-- STAGE 8
+
+WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(WEDDINGS)\b') 
+          
+    AND REGEXP_CONTAINS(MEDIA, r'\b(Google AdWords)\b') 
+    THEN 'BOFU'
+
+-- STAGE 9
+
+  WHEN REGEXP_CONTAINS(
+            
+            (    CASE 
+        WHEN CAMPAIGN LIKE '%XCP%' THEN 'OPENNING XCP'
+        WHEN BANNER_ADGROUP LIKE '%_BF_%' THEN 'BLACK FRIDAY'
+        WHEN BANNER_ADGROUP LIKE '%BBDD-NN%' THEN 'NEW YEAR'
+        WHEN CAMPAIGN LIKE '%BRAND_FR_Alkemy%' THEN 'BRAND_FR_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_ER_Alkemy%' THEN 'BRAND_ER_Alkemy'
+        WHEN CAMPAIGN LIKE '%BRAND_BOTB_Alkemy%' THEN 'BRAND_BOTB_Alkemy'
+        WHEN CAMPAIGN LIKE '%WED%' THEN 'WEDDINGS'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(AO|ao)\b') THEN 'AO'
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(TEST|test)\b') THEN 'TEST_Alkemy'
+        ELSE 'RESTO'
+    END)
+            , r'\b(WEDDINGS)\b') 
+            AND  REGEXP_CONTAINS(
+                ( CASE 
+        WHEN REGEXP_CONTAINS(CAMPAIGN, r'\b(BRAND_BOTB_Alkemy|BRAND_ER_Alkemy|BRAND_FR_Alkemy)\b') THEN 'AWA'
+        -- WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        -- WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        WHEN CAMPAIGN LIKE '%BRAND%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM BRAND'
+        WHEN CAMPAIGN LIKE '%GEN%' AND CAMPAIGN_TYPE = 'Search' THEN 'SEM GEN'
+        ELSE PLACEMENT 
+    END )
+                
+                , r'\b(PRS)\b')
+THEN 'MOFU'
+
+        ELSE 'NA'
+    END AS FUNNEL
+
+FROM 
+    `TEC_EXCELLENCE_ADFORM_CLICS_IMPRESSION.Transform_Adform_Impression`
+    
+where cast(LEFT(timestamp,10) as date) >= '2024-10-01';
