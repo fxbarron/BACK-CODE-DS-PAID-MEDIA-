@@ -5,4 +5,6 @@ update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set MEDIO = 
 update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set canal = 'Search' where CANAL = 'SEARCH';
 update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set canal = 'Search' where REGEXP_CONTAINS(CANAL, r'(?i)(MICROSOFT|GOOGLE)');
 update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set canal = 'Display' where REGEXP_CONTAINS(CANAL, r'(?i)(RTB)');
-
+update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set FUNNEL = 'TOFU'
+WHERE
+FUNNEL = 'MOFU' AND CANAL = 'Display' and CAMPANIA = 'WEDDINGS' AND MEDIO = 'Bride Click'
