@@ -3,7 +3,7 @@
 -- select * from `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Bookings_Leads`;
 
 
-   --  INSERT INTO `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Bookings_Leads`
+-- INSERT INTO `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Bookings_Leads`
 
 select Fecha, Campaign_funnel,Funnel,Campania,Canal, Medio,sum(bookings) as Bookings, Sum(revenue) as Revenue, sum(leads)as Leads
 
@@ -311,7 +311,16 @@ THEN 'MOFU'
     END AS FUNNEL,
 
 
- CAMPAIGN AS Campania, CAMPAIGN_TYPE as Canal, MEDIA as Medio, count(*) as Bookings, sum(SALES) as Revenue, 0 as Leads  from  `primal-sunup-357522.TEC_EXCELLENCE_ADFORM_CONVERSION.Transform_Adform_Conversion_Data`
+ CAMPAIGN AS Campania, 
+ 
+  -- HOMOLOGA CHANNEL
+    CASE 
+        WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        ELSE CAMPAIGN_TYPE 
+    END AS  Canal,
+ 
+  MEDIA as Medio, count(*) as Bookings, sum(SALES) as Revenue, 0 as Leads  from  `primal-sunup-357522.TEC_EXCELLENCE_ADFORM_CONVERSION.Transform_Adform_Conversion_Data`
 where CAST(TIMESTAMP AS DATE) >= '2024-10-01'
 group by 1,2,3,4,5,6
 
@@ -617,7 +626,16 @@ THEN 'MOFU'
     END AS FUNNEL,
  
  
- CAMPAIGN AS Campania, CAMPAIGN_TYPE as Canal, MEDIA as Medio, 0 as Bookings, 0 as Revenue, count(*) as Leads  from  `primal-sunup-357522.TEC_EXCELLENCE_ADFORM_CONVERSION.Transform_Adform_Leads_Weddings`
+ CAMPAIGN AS Campania, 
+
+  -- HOMOLOGA CHANNEL
+    CASE 
+        WHEN BANNER_ADGROUP LIKE '%EMAIL%' THEN 'Email'
+        WHEN BANNER_ADGROUP LIKE '%VIDEO%' THEN 'Video'
+        ELSE CAMPAIGN_TYPE 
+    END AS  Canal, 
+ 
+ MEDIA as Medio, 0 as Bookings, 0 as Revenue, count(*) as Leads  from  `primal-sunup-357522.TEC_EXCELLENCE_ADFORM_CONVERSION.Transform_Adform_Leads_Weddings`
 where CAST(FECHA AS DATE) >= '2024-10-01'
 group by 1,2,3,4,5,6)
 
