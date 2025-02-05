@@ -11,6 +11,11 @@ update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set FUNNEL =
 WHERE FUNNEL = 'MOFU' AND CANAL = 'Display' and CAMPANIA = 'WEDDINGS' AND MEDIO = 'PINTEREST';
 update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set FUNNEL = 'BOFU' where MEDIO IN ('MICROSOFTPMAX') AND
 FECHA >= '2025-02-01';
+update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set FUNNEL = 'BOFU', CANAL = 'Mixto',CAMPANIA = 'AO' where MEDIO IN ('MICROSOFTPMAX') AND
+FECHA >= '2025-02-01';
+
+
+update `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Objetivos_dia` set  CANAL = 'Mixto' where MEDIO IN ('MICROSOFTPMAX');
   
 
 
