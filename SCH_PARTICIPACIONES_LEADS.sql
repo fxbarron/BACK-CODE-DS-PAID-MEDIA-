@@ -1008,3 +1008,12 @@ ON C.IP = IM.IP AND C.CookieID = IM.CookieID
    group by 
  1,2,3,4,5,6,7,8,9,10,11,12,13,14 order by 1,4,5 asc)
  GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14 order by 1,4,5 asc;
+
+
+  TRUNCATE TABLE `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Participaciones_Leads`;
+
+  INSERT INTO `primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Participaciones_Leads`
+
+SELECT FECHA_CONVERSION as Fecha,Funnel,CAMPAIGN_FUNNEL AS Campaign,Canal,Medio,count(distinct P2C_ID_DL) AS Paticipaciones FROM
+`primal-sunup-357522.TEC_LAYOUT_OBJETIVOS.TEC_Stg_P2C_Part_Leads` where FUNNEL <> 'NA'
+GROUP BY 1,2,3,4,5 ORDER BY FECHA_CONVERSION ASC;
